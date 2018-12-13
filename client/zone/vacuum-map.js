@@ -317,6 +317,18 @@ function VacuumMap(canvasElement) {
             document.getElementById("x2").value = (marker2) ? convertToRealCoords(marker2).x : '';
             document.getElementById("y2").value = (marker2) ? convertToRealCoords(marker2).y : '';
 
+            if(marker && marker2) {
+               p1Real = convertToRealCoords(marker);
+               p2Real = convertToRealCoords(marker2);
+	       document.getElementById("zone_xiaomi").value = JSON.stringify([[
+                    2550 - Math.min(p1Real.x, p2Real.x),
+                    2550 - Math.min(p1Real.y, p2Real.y),
+                    2550 - Math.max(p1Real.x, p2Real.x),
+                    2550 - Math.max(p1Real.y, p2Real.y),
+                    1
+                ]]);
+            }
+
             redraw();
         }
 
