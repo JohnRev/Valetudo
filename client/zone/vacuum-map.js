@@ -321,10 +321,10 @@ function VacuumMap(canvasElement) {
                p1Real = convertToRealCoords(marker);
                p2Real = convertToRealCoords(marker2);
 	       document.getElementById("zone_xiaomi").value = JSON.stringify([[
-                    2550 - Math.min(p1Real.x, p2Real.x),
-                    2550 - Math.min(p1Real.y, p2Real.y),
-                    2550 - Math.max(p1Real.x, p2Real.x),
-                    2550 - Math.max(p1Real.y, p2Real.y),
+                    25500 - Math.min(p1Real.x, p2Real.x),
+                    25500 - Math.min(p1Real.y, p2Real.y),
+                    25500 - Math.max(p1Real.x, p2Real.x),
+                    25500 - Math.max(p1Real.y, p2Real.y),
                     1
                 ]]);
             }
