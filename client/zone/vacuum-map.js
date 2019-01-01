@@ -396,6 +396,24 @@ function VacuumMap(canvasElement) {
                         1
                     ]
                 ]);
+
+x1 = 25500 - Math.min(p1Real.x, p2Real.x);
+y1 = 25500 - Math.min(p1Real.y, p2Real.y);
+x3 = 25500 - Math.max(p1Real.x, p2Real.x);
+y3 = 25500 - Math.max(p1Real.y, p2Real.y)
+                document.getElementById("nogo_xiaomi").value = JSON.stringify([
+                    [
+                        0,
+                        x1,
+                        y1,
+                        x3,
+			y1,
+			x3,
+			y3,
+			x1,
+			y3
+                    ]
+                ]);
             }
             redraw();
         }
