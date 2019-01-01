@@ -64,6 +64,7 @@ function MapDrawer() {
 
 function PathDrawer() {
     let path = [];
+    let persist = [];
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 1024;
@@ -90,6 +91,9 @@ function PathDrawer() {
         path = newPath;
     }
 
+    function setPersist(newPersist) {
+        persist = newPersist;
+    }
     function scale(factor) {
         const newScaleFactor = Math.min(factor, maxScaleFactor);
         if(newScaleFactor === scaleFactor) return;
@@ -123,11 +127,72 @@ function PathDrawer() {
             }
         }
         ctx.stroke();
+
+        persist.walls.forEach(function(wall) {
+            factor = 1000;
+            for (var kk = 0; kk < 8; kk++) {
+                wall[kk] = wall[kk] / factor;
+            }
+
+
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#414854";
+
+            let first = true;
+            for (var kk = 0; kk < 3; kk = kk + 2) {
+                var {
+                    x,
+                    y
+                } = new DOMPoint(wall[kk], wall[kk + 1]).matrixTransform(pathTransform);
+                if (first) {
+                    ctx.moveTo(x, y);
+                    first = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+        });
+
+        persist.zones.forEach(function(zone) {
+            var ctx = canvas.getContext("2d");
+
+            factor = 1000;
+            for (var kk = 0; kk < 8; kk++) {
+                zone[kk] = zone[kk] / factor;
+            }
+
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#414854";
+            ctx.fillStyle = 'rgba(0,0,0,.2)';
+
+            let first = true;
+            for (var kk = 0; kk < 7; kk = kk + 2) {
+                var {
+                    x,
+                    y
+                } = new DOMPoint(zone[kk], zone[kk + 1]).matrixTransform(pathTransform);
+                if (first) {
+                    ctx.moveTo(x, y);
+                    first = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+        });
     }
 
     return {
         setPath: setPath,
-        setFlipped, setFlipped,
+        setPersist: setPersist,
+        setFlipped: setFlipped,
         scale: scale,
         getScaleFactor: function() { return scaleFactor; },
         canvas: canvas,
@@ -162,6 +227,7 @@ function VacuumMap(canvasElement) {
         }
         mapDrawer.draw(data.map);
         pathDrawer.setPath(data.path);
+        pathDrawer.setPersist(data.persistdata);
         pathDrawer.setFlipped(data.yFlipped);
         pathDrawer.draw();
         if (redrawCanvas) redrawCanvas();
@@ -231,6 +297,7 @@ function VacuumMap(canvasElement) {
         );
 
         pathDrawer.setPath(data.path);
+        pathDrawer.setPersist(data.persistdata);
         pathDrawer.setFlipped(data.yFlipped);
         pathDrawer.scale(initialScalingFactor);
 
@@ -317,6 +384,19 @@ function VacuumMap(canvasElement) {
             document.getElementById("x2").value = (marker2) ? convertToRealCoords(marker2).x : '';
             document.getElementById("y2").value = (marker2) ? convertToRealCoords(marker2).y : '';
 
+            if (marker && marker2) {
+                p1Real = convertToRealCoords(marker);
+                p2Real = convertToRealCoords(marker2);
+                document.getElementById("zone_xiaomi").value = JSON.stringify([
+                    [
+                        25500 - Math.min(p1Real.x, p2Real.x),
+                        25500 - Math.min(p1Real.y, p2Real.y),
+                        25500 - Math.max(p1Real.x, p2Real.x),
+                        25500 - Math.max(p1Real.y, p2Real.y),
+                        1
+                    ]
+                ]);
+            }
             redraw();
         }
 
