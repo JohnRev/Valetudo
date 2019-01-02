@@ -1038,7 +1038,15 @@ WebServer.GET_VIRTUAL_WALLS = function(data) {
 WebServer.UNPACK_PERSIST = function(filename) {
     try {
         file = fs.readFileSync(path.join(filename));
-        data = zlib.inflateSync(file.slice(23));
+        // Seems different firmwares have different header sizes for PersistData_1.data
+        possible_offsets = [23, 25];
+        for (let i in possible_offsets) {
+            offset = possible_offsets[i];
+            if (file[offset] == 120 && file[offset + 1] == 156) { // magic header for zlib
+                break;
+            }
+        }
+        data = zlib.inflateSync(file.slice(offset));
         walls = WebServer.GET_VIRTUAL_WALLS(data);
         zones = WebServer.GET_NOGO_ZONES(data);
         return {
